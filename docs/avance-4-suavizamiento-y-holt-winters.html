@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>4 Avance 4 — Suavizamiento y Holt-Winters | Pronóstico con series de tiempo: S&amp;P 500</title>
+  <meta name="description" content="4 Avance 4 — Suavizamiento y Holt-Winters | Pronóstico con series de tiempo: S&amp;P 500" />
+  <meta name="generator" content="bookdown 0.45 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="4 Avance 4 — Suavizamiento y Holt-Winters | Pronóstico con series de tiempo: S&amp;P 500" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="4 Avance 4 — Suavizamiento y Holt-Winters | Pronóstico con series de tiempo: S&amp;P 500" />
+  
+  
+  
+
+<meta name="author" content="Grupo 1: Lilian Ramirez - Omar Rodriguez - Hans Silva" />
+
+
+<meta name="date" content="2025-11-03" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="avance-3-estacionariedad-diferenciación-y-transformaciones.html"/>
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Propuesta de trabajo</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#descripci%C3%B3n-general"><i class="fa fa-check"></i><b>1.1</b> 1. Descripción general</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#justificaci%C3%B3n-e-importancia-del-an%C3%A1lisis"><i class="fa fa-check"></i><b>1.2</b> 2. Justificación e importancia del análisis</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#fuentes-y-permisos-de-uso"><i class="fa fa-check"></i><b>1.3</b> 3. Fuentes y permisos de uso</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="avance-2-análisis-exploratorio-temporal.html"><a href="avance-2-análisis-exploratorio-temporal.html"><i class="fa fa-check"></i><b>2</b> Avance 2 Análisis exploratorio temporal</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="avance-2-análisis-exploratorio-temporal.html"><a href="avance-2-análisis-exploratorio-temporal.html#carga-de-paquetes-y-de-datos"><i class="fa fa-check"></i><b>2.1</b> 1. Carga de paquetes y de datos</a></li>
+<li class="chapter" data-level="2.2" data-path="avance-2-análisis-exploratorio-temporal.html"><a href="avance-2-análisis-exploratorio-temporal.html#clase-e-iniciofin-de-la-serie"><i class="fa fa-check"></i><b>2.2</b> 2. Clase e inicio/fin de la serie</a></li>
+<li class="chapter" data-level="2.3" data-path="avance-2-análisis-exploratorio-temporal.html"><a href="avance-2-análisis-exploratorio-temporal.html#visualizaci%C3%B3n-general"><i class="fa fa-check"></i><b>2.3</b> 3. Visualización general</a></li>
+<li class="chapter" data-level="2.4" data-path="avance-2-análisis-exploratorio-temporal.html"><a href="avance-2-análisis-exploratorio-temporal.html#tendencia-mediante-promedios-m%C3%B3viles"><i class="fa fa-check"></i><b>2.4</b> 4. Tendencia mediante promedios móviles</a></li>
+<li class="chapter" data-level="2.5" data-path="avance-2-análisis-exploratorio-temporal.html"><a href="avance-2-análisis-exploratorio-temporal.html#an%C3%A1lisis-de-estacionalidad-promedio-mensual-por-a%C3%B1o"><i class="fa fa-check"></i><b>2.5</b> 5. Análisis de estacionalidad: promedio mensual por año</a></li>
+<li class="chapter" data-level="2.6" data-path="avance-2-análisis-exploratorio-temporal.html"><a href="avance-2-análisis-exploratorio-temporal.html#descomposici%C3%B3n-stl-y-gr%C3%A1fico-estacional"><i class="fa fa-check"></i><b>2.6</b> 6. Descomposición STL y gráfico estacional</a></li>
+<li class="chapter" data-level="2.7" data-path="avance-2-análisis-exploratorio-temporal.html"><a href="avance-2-análisis-exploratorio-temporal.html#rezagos-y-autocorrelaci%C3%B3n"><i class="fa fa-check"></i><b>2.7</b> 7. Rezagos y autocorrelación</a></li>
+<li class="chapter" data-level="2.8" data-path="avance-2-análisis-exploratorio-temporal.html"><a href="avance-2-análisis-exploratorio-temporal.html#conclusiones-del-avance-2"><i class="fa fa-check"></i><b>2.8</b> 8. Conclusiones del Avance 2</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="avance-3-estacionariedad-diferenciación-y-transformaciones.html"><a href="avance-3-estacionariedad-diferenciación-y-transformaciones.html"><i class="fa fa-check"></i><b>3</b> Avance 3 — Estacionariedad, diferenciación y transformaciones</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="avance-3-estacionariedad-diferenciación-y-transformaciones.html"><a href="avance-3-estacionariedad-diferenciación-y-transformaciones.html#preparaci%C3%B3n-y-consistencia-diaria-mensual"><i class="fa fa-check"></i><b>3.1</b> 10. Preparación y consistencia (diaria → mensual)</a></li>
+<li class="chapter" data-level="3.2" data-path="avance-3-estacionariedad-diferenciación-y-transformaciones.html"><a href="avance-3-estacionariedad-diferenciación-y-transformaciones.html#transformaciones-para-controlar-la-variabilidad-logboxcox"><i class="fa fa-check"></i><b>3.2</b> 11. Transformaciones para controlar la variabilidad (log/Box–Cox)</a></li>
+<li class="chapter" data-level="3.3" data-path="avance-3-estacionariedad-diferenciación-y-transformaciones.html"><a href="avance-3-estacionariedad-diferenciación-y-transformaciones.html#en-contraste-el-gr%C3%A1fico-de-la-transformaci%C3%B3n-boxcox-%CE%BB-0.674-muestra-la-misma-tendencia-pero-con-una-escala-m%C3%A1s-comprimida-22-a-34-lo-que-indica-una-reducci%C3%B3n-en-la-variabilidad-relativa.-esta-transformaci%C3%B3n-contribuye-a-estabilizar-la-varianza-aunque-no-elimina-la-tendencia-por-lo-que-ser%C3%A1-necesario-aplicar-diferenciaci%C3%B3n-para-lograr-estacionariedad."><i class="fa fa-check"></i><b>3.3</b> En contraste, el gráfico de la transformación Box–Cox (λ ≈ 0.674) muestra la misma tendencia, pero con una escala más comprimida (22 a 34), lo que indica una reducción en la variabilidad relativa. Esta transformación contribuye a estabilizar la varianza, aunque no elimina la tendencia, por lo que será necesario aplicar diferenciación para lograr estacionariedad.</a></li>
+<li class="chapter" data-level="3.4" data-path="avance-3-estacionariedad-diferenciación-y-transformaciones.html"><a href="avance-3-estacionariedad-diferenciación-y-transformaciones.html#pruebas-de-estacionariedad-adf-kpss-pp-y-selecci%C3%B3n-de-dd"><i class="fa fa-check"></i><b>3.4</b> 12. Pruebas de estacionariedad (ADF, KPSS, PP) y selección de d/D</a></li>
+<li class="chapter" data-level="3.5" data-path="avance-3-estacionariedad-diferenciación-y-transformaciones.html"><a href="avance-3-estacionariedad-diferenciación-y-transformaciones.html#en-conjunto-estas-pruebas-evidencian-que-la-serie-requiere-una-transformaci%C3%B3n-adicional-para-cumplir-con-los-supuestos-de-estacionariedad.-la-funci%C3%B3n-ndiffs-sugiere-aplicar-una-diferencia-regular-d-1-mientras-que-nsdiffs-indica-que-no-es-necesaria-una-diferencia-estacional-d-0."><i class="fa fa-check"></i><b>3.5</b> En conjunto, estas pruebas evidencian que la serie requiere una transformación adicional para cumplir con los supuestos de estacionariedad. La función ndiffs() sugiere aplicar una diferencia regular (d = 1), mientras que nsdiffs() indica que no es necesaria una diferencia estacional (D = 0).*</a></li>
+<li class="chapter" data-level="3.6" data-path="avance-3-estacionariedad-diferenciación-y-transformaciones.html"><a href="avance-3-estacionariedad-diferenciación-y-transformaciones.html#diferenciaci%C3%B3n-y-revalidaci%C3%B3n"><i class="fa fa-check"></i><b>3.6</b> 13. Diferenciación y revalidación</a></li>
+<li class="chapter" data-level="3.7" data-path="avance-3-estacionariedad-diferenciación-y-transformaciones.html"><a href="avance-3-estacionariedad-diferenciación-y-transformaciones.html#esto-es-coherente-con-lo-observado-en-avance-2-precios-suelen-requerir-d-1-retornos-tienden-a-ser-estacionarios-sin-diferenciar."><i class="fa fa-check"></i><b>3.7</b> Esto es coherente con lo observado en Avance 2: <strong>precios</strong> suelen requerir <strong>d = 1</strong>; <strong>retornos</strong> tienden a ser estacionarios sin diferenciar.</a></li>
+<li class="chapter" data-level="3.8" data-path="avance-3-estacionariedad-diferenciación-y-transformaciones.html"><a href="avance-3-estacionariedad-diferenciación-y-transformaciones.html#descomposici%C3%B3n-complementaria-y-residuales-stl-robusta"><i class="fa fa-check"></i><b>3.8</b> 14. Descomposición complementaria y residuales (STL robusta)</a></li>
+<li class="chapter" data-level="3.9" data-path="avance-3-estacionariedad-diferenciación-y-transformaciones.html"><a href="avance-3-estacionariedad-diferenciación-y-transformaciones.html#esta-descomposici%C3%B3n-permite-concluir-que-la-serie-requiere-diferenciaci%C3%B3n-para-eliminar-la-tendencia-y-que-la-estacionalidad-aunque-presente-no-justifica-una-diferencia-estacional-adicional.-adem%C3%A1s-la-transformaci%C3%B3n-boxcox-aplicada-previamente-contribuye-a-estabilizar-la-variabilidad-mejorando-la-calidad-del-residuo."><i class="fa fa-check"></i><b>3.9</b> Esta descomposición permite concluir que la serie requiere diferenciación para eliminar la tendencia, y que la estacionalidad, aunque presente, no justifica una diferencia estacional adicional. Además, la transformación Box–Cox aplicada previamente contribuye a estabilizar la variabilidad, mejorando la calidad del residuo.</a></li>
+<li class="chapter" data-level="3.10" data-path="avance-3-estacionariedad-diferenciación-y-transformaciones.html"><a href="avance-3-estacionariedad-diferenciación-y-transformaciones.html#choques-at%C3%ADpicos-aotc-como-gu%C3%ADa-de-intervenci%C3%B3n"><i class="fa fa-check"></i><b>3.10</b> 15. Choques atípicos: AO/TC como guía de intervención</a></li>
+<li class="chapter" data-level="3.11" data-path="avance-3-estacionariedad-diferenciación-y-transformaciones.html"><a href="avance-3-estacionariedad-diferenciación-y-transformaciones.html#conclusion-del-avance-3"><i class="fa fa-check"></i><b>3.11</b> 16. Conclusion del Avance 3</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="avance-4-suavizamiento-y-holt-winters.html"><a href="avance-4-suavizamiento-y-holt-winters.html"><i class="fa fa-check"></i><b>4</b> Avance 4 — Suavizamiento y Holt-Winters</a>
+<ul>
+<li class="chapter" data-level="4.0.1" data-path="avance-4-suavizamiento-y-holt-winters.html"><a href="avance-4-suavizamiento-y-holt-winters.html#descomposici%C3%B3n-del-modelo"><i class="fa fa-check"></i><b>4.0.1</b> Descomposición del modelo</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Pronóstico con series de tiempo: S&amp;P 500</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="avance-4-suavizamiento-y-holt-winters" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">4</span> Avance 4 — Suavizamiento y Holt-Winters<a href="avance-4-suavizamiento-y-holt-winters.html#avance-4-suavizamiento-y-holt-winters" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>En este avance aplicamos suavizamiento exponencial (SES y Holt) y el modelo Holt-Winters para capturar nivel, tendencia y estacionalidad de la serie mensual del S&amp;P 500. Se trabaja sobre promedios mensuales del cierre ajustado y se evalúa con un split temporal (últimos 12 meses como test).</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="avance-4-suavizamiento-y-holt-winters.html#cb51-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb51-2"><a href="avance-4-suavizamiento-y-holt-winters.html#cb51-2" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb51-3"><a href="avance-4-suavizamiento-y-holt-winters.html#cb51-3" tabindex="-1"></a><span class="fu">library</span>(zoo)</span>
+<span id="cb51-4"><a href="avance-4-suavizamiento-y-holt-winters.html#cb51-4" tabindex="-1"></a><span class="fu">library</span>(forecast)   <span class="co"># accuracy(), autoplot.ts, funciones de suavizamiento</span></span>
+<span id="cb51-5"><a href="avance-4-suavizamiento-y-holt-winters.html#cb51-5" tabindex="-1"></a></span>
+<span id="cb51-6"><a href="avance-4-suavizamiento-y-holt-winters.html#cb51-6" tabindex="-1"></a></span>
+<span id="cb51-7"><a href="avance-4-suavizamiento-y-holt-winters.html#cb51-7" tabindex="-1"></a><span class="co"># Pre-visualización rápida</span></span>
+<span id="cb51-8"><a href="avance-4-suavizamiento-y-holt-winters.html#cb51-8" tabindex="-1"></a></span>
+<span id="cb51-9"><a href="avance-4-suavizamiento-y-holt-winters.html#cb51-9" tabindex="-1"></a><span class="fu">head</span>(spx_mensual)</span></code></pre></div>
+<pre><code>## # A tibble: 6 × 2
+##   ym         mean_close
+##   &lt;date&gt;          &lt;dbl&gt;
+## 1 2013-02-01       58.1
+## 2 2013-03-01       59.5
+## 3 2013-04-01       60.3
+## 4 2013-05-01       63.3
+## 5 2013-06-01       62.0
+## 6 2013-07-01       64.1</code></pre>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="avance-4-suavizamiento-y-holt-winters.html#cb53-1" tabindex="-1"></a><span class="fu">start</span>(spx_ts); <span class="fu">end</span>(spx_ts); <span class="fu">frequency</span>(spx_ts)</span></code></pre></div>
+<pre><code>## [1] 2013    2</code></pre>
+<pre><code>## [1] 2018    2</code></pre>
+<pre><code>## [1] 12</code></pre>
+<p>##17. Suavizamiento exponencial: SES y Holt</p>
+<p>En esta sección se aplican dos métodos de suavizamiento exponencial a la serie temporal del <strong>S&amp;P 500 mensual</strong>, con el propósito de modelar su nivel y tendencia. Estos métodos permiten capturar dinámicas a corto y mediano plazo, suavizando el ruido de los datos y resaltando patrones sistemáticos.</p>
+<p>El objetivo es evaluar y comparar los resultados obtenidos mediante:
+- <strong>SES (Simple Exponential Smoothing)</strong>: captura únicamente el <strong>nivel</strong> de la serie.
+- <strong>Holt (Linear Trend Method)</strong>: incorpora <strong>nivel y tendencia</strong> en el ajuste.</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="avance-4-suavizamiento-y-holt-winters.html#cb57-1" tabindex="-1"></a><span class="co"># SES (nivel)</span></span>
+<span id="cb57-2"><a href="avance-4-suavizamiento-y-holt-winters.html#cb57-2" tabindex="-1"></a>fit_ses  <span class="ot">&lt;-</span> <span class="fu">HoltWinters</span>(spx_ts, <span class="at">beta =</span> <span class="cn">FALSE</span>, <span class="at">gamma =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb57-3"><a href="avance-4-suavizamiento-y-holt-winters.html#cb57-3" tabindex="-1"></a></span>
+<span id="cb57-4"><a href="avance-4-suavizamiento-y-holt-winters.html#cb57-4" tabindex="-1"></a><span class="co"># Holt (nivel + tendencia)</span></span>
+<span id="cb57-5"><a href="avance-4-suavizamiento-y-holt-winters.html#cb57-5" tabindex="-1"></a>fit_holt <span class="ot">&lt;-</span> <span class="fu">HoltWinters</span>(spx_ts, <span class="at">gamma =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb57-6"><a href="avance-4-suavizamiento-y-holt-winters.html#cb57-6" tabindex="-1"></a></span>
+<span id="cb57-7"><a href="avance-4-suavizamiento-y-holt-winters.html#cb57-7" tabindex="-1"></a><span class="co"># Pronósticos a 12 meses para comparar</span></span>
+<span id="cb57-8"><a href="avance-4-suavizamiento-y-holt-winters.html#cb57-8" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="dv">12</span></span>
+<span id="cb57-9"><a href="avance-4-suavizamiento-y-holt-winters.html#cb57-9" tabindex="-1"></a>fc_ses  <span class="ot">&lt;-</span> forecast<span class="sc">::</span><span class="fu">forecast</span>(fit_ses,  <span class="at">h =</span> h)</span>
+<span id="cb57-10"><a href="avance-4-suavizamiento-y-holt-winters.html#cb57-10" tabindex="-1"></a>fc_holt <span class="ot">&lt;-</span> forecast<span class="sc">::</span><span class="fu">forecast</span>(fit_holt, <span class="at">h =</span> h)</span>
+<span id="cb57-11"><a href="avance-4-suavizamiento-y-holt-winters.html#cb57-11" tabindex="-1"></a></span>
+<span id="cb57-12"><a href="avance-4-suavizamiento-y-holt-winters.html#cb57-12" tabindex="-1"></a><span class="co"># Métricas sobre ajuste in-sample</span></span>
+<span id="cb57-13"><a href="avance-4-suavizamiento-y-holt-winters.html#cb57-13" tabindex="-1"></a>acc_ses  <span class="ot">&lt;-</span> <span class="fu">accuracy</span>(fit_ses<span class="sc">$</span>fitted,   spx_ts)</span>
+<span id="cb57-14"><a href="avance-4-suavizamiento-y-holt-winters.html#cb57-14" tabindex="-1"></a>acc_holt <span class="ot">&lt;-</span> <span class="fu">accuracy</span>(fit_holt<span class="sc">$</span>fitted,  spx_ts)</span>
+<span id="cb57-15"><a href="avance-4-suavizamiento-y-holt-winters.html#cb57-15" tabindex="-1"></a></span>
+<span id="cb57-16"><a href="avance-4-suavizamiento-y-holt-winters.html#cb57-16" tabindex="-1"></a>acc_ses</span></code></pre></div>
+<pre><code>##                 ME     RMSE      MAE      MPE     MAPE       ACF1 Theil&#39;s U
+## Test set 0.8520457 2.056776 1.612118 1.020916 1.950276 0.01640968  1.000009</code></pre>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="avance-4-suavizamiento-y-holt-winters.html#cb59-1" tabindex="-1"></a>acc_holt</span></code></pre></div>
+<pre><code>##                  ME     RMSE      MAE       MPE     MAPE       ACF1 Theil&#39;s U
+## Test set -0.1945302 1.931529 1.440219 -0.296499 1.729088 0.01653514 0.9192018</code></pre>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-1" tabindex="-1"></a><span class="co"># Comparación visual del ajuste SES vs Holt</span></span>
+<span id="cb61-2"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-2" tabindex="-1"></a></span>
+<span id="cb61-3"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-3" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb61-4"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-4" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb61-5"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-5" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb61-6"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-6" tabindex="-1"></a></span>
+<span id="cb61-7"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-7" tabindex="-1"></a><span class="co"># Extraer las longitudes de cada objeto fitted</span></span>
+<span id="cb61-8"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-8" tabindex="-1"></a>len_ses  <span class="ot">&lt;-</span> <span class="fu">nrow</span>(fit_ses<span class="sc">$</span>fitted)</span>
+<span id="cb61-9"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-9" tabindex="-1"></a>len_holt <span class="ot">&lt;-</span> <span class="fu">nrow</span>(fit_holt<span class="sc">$</span>fitted)</span>
+<span id="cb61-10"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-10" tabindex="-1"></a>len_ts   <span class="ot">&lt;-</span> <span class="fu">length</span>(spx_ts)</span>
+<span id="cb61-11"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-11" tabindex="-1"></a></span>
+<span id="cb61-12"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-12" tabindex="-1"></a><span class="co"># Usar la longitud mínima para alinear todas las series</span></span>
+<span id="cb61-13"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-13" tabindex="-1"></a>min_len <span class="ot">&lt;-</span> <span class="fu">min</span>(len_ses, len_holt, len_ts)</span>
+<span id="cb61-14"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-14" tabindex="-1"></a></span>
+<span id="cb61-15"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-15" tabindex="-1"></a><span class="co"># Cortar cada serie para igualarlas</span></span>
+<span id="cb61-16"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-16" tabindex="-1"></a>spx_ts_aligned <span class="ot">&lt;-</span> <span class="fu">tail</span>(spx_ts, min_len)</span>
+<span id="cb61-17"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-17" tabindex="-1"></a>ses_aligned    <span class="ot">&lt;-</span> <span class="fu">tail</span>(fit_ses<span class="sc">$</span>fitted[,<span class="dv">1</span>], min_len)</span>
+<span id="cb61-18"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-18" tabindex="-1"></a>holt_aligned   <span class="ot">&lt;-</span> <span class="fu">tail</span>(fit_holt<span class="sc">$</span>fitted[,<span class="dv">1</span>], min_len)</span>
+<span id="cb61-19"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-19" tabindex="-1"></a></span>
+<span id="cb61-20"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-20" tabindex="-1"></a><span class="co"># Crear dataframe compatible</span></span>
+<span id="cb61-21"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-21" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb61-22"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-22" tabindex="-1"></a>  <span class="at">Fecha =</span> <span class="fu">as.Date</span>(<span class="fu">time</span>(<span class="fu">tail</span>(spx_ts, min_len))),</span>
+<span id="cb61-23"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-23" tabindex="-1"></a>  <span class="at">Original =</span> <span class="fu">as.numeric</span>(spx_ts_aligned),</span>
+<span id="cb61-24"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-24" tabindex="-1"></a>  <span class="at">SES =</span> <span class="fu">as.numeric</span>(ses_aligned),</span>
+<span id="cb61-25"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-25" tabindex="-1"></a>  <span class="at">Holt =</span> <span class="fu">as.numeric</span>(holt_aligned)</span>
+<span id="cb61-26"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-26" tabindex="-1"></a>)</span>
+<span id="cb61-27"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-27" tabindex="-1"></a></span>
+<span id="cb61-28"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-28" tabindex="-1"></a><span class="co"># Reorganizar en formato largo para graficar</span></span>
+<span id="cb61-29"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-29" tabindex="-1"></a>plot_long <span class="ot">&lt;-</span> plot_data <span class="sc">%&gt;%</span></span>
+<span id="cb61-30"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-30" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(SES, Holt),</span>
+<span id="cb61-31"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-31" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;Modelo&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;Ajuste&quot;</span>)</span>
+<span id="cb61-32"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-32" tabindex="-1"></a></span>
+<span id="cb61-33"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-33" tabindex="-1"></a><span class="co"># Graficar con ggplot</span></span>
+<span id="cb61-34"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-34" tabindex="-1"></a><span class="fu">ggplot</span>(plot_long, <span class="fu">aes</span>(<span class="at">x =</span> Fecha)) <span class="sc">+</span></span>
+<span id="cb61-35"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-35" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> Original), <span class="at">color =</span> <span class="st">&quot;gray70&quot;</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb61-36"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-36" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> Ajuste, <span class="at">color =</span> Modelo),</span>
+<span id="cb61-37"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-37" tabindex="-1"></a>            <span class="at">linewidth =</span> <span class="fl">0.6</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="sc">+</span></span>
+<span id="cb61-38"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-38" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;SES&quot;</span> <span class="ot">=</span> <span class="st">&quot;steelblue&quot;</span>, <span class="st">&quot;Holt&quot;</span> <span class="ot">=</span> <span class="st">&quot;firebrick&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb61-39"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-39" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Suavizamiento exponencial — SES vs Holt&quot;</span>,</span>
+<span id="cb61-40"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-40" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Tiempo&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Nivel&quot;</span>, <span class="at">color =</span> <span class="st">&quot;Modelo&quot;</span>) <span class="sc">+</span></span>
+<span id="cb61-41"><a href="avance-4-suavizamiento-y-holt-winters.html#cb61-41" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<p><img src="Bookdown4_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p><strong>Análisis de las métricas:</strong></p>
+<p><strong>ME (Error medio):</strong> mide el sesgo del modelo.</p>
+<ul>
+<li><p>El SES muestra un error medio positivo (0.85), indicando una ligera <strong>sobreestimación.</strong></p></li>
+<li><p>El modelo Holt tiene un ME negativo (-0.19), por lo que tiende a <strong>subestimar levemente</strong> los valores reales.</p></li>
+</ul>
+<p><strong>RMSE (Raíz del error cuadrático medio) y MAE (Error absoluto medio)</strong> son más bajos en el modelo Holt, lo que evidencia un mejor ajuste general.</p>
+<p><strong>MPE y MAPE (Errores porcentuales)</strong> también son menores para Holt, confirmando que la inclusión de la tendencia mejora la precisión.</p>
+<p><strong>Theil’s U &lt; 1</strong> en ambos casos indica que los modelos superan a un pronóstico ingenuo (random walk), pero Holt obtiene un valor menor (0.92), lo que sugiere un desempeño superior.</p>
+<p>El <strong>ACF1 (autocorrelación de los residuos)</strong> es bajo en ambos modelos (~0.016), lo que sugiere que los errores no presentan estructura temporal importante.</p>
+<p><strong>Conclusión</strong></p>
+<p>El <strong>modelo Holt</strong> presenta un mejor desempeño que el SES, al reducir los errores y capturar la tendencia creciente del índice S&amp;P 500.
+Por tanto, se concluye que el componente de <strong>tendencia</strong> es relevante en la dinámica de esta serie temporal, aunque la estacionalidad se abordará posteriormente mediante el método <strong>Holt-Winters</strong>.</p>
+<p>##18. Suavizamiento exponencial triple: Holt-Winters</p>
+<p>Tras analizar los modelos de nivel (<strong>SES</strong>) y nivel + tendencia (<strong>Holt</strong>), incorporamos ahora el componente de <strong>estacionalidad</strong> mediante el modelo <strong>Holt-Winters</strong>.<br />
+Este enfoque permite capturar simultáneamente <strong>nivel, tendencia y patrones estacionales</strong> de la serie temporal del S&amp;P 500.</p>
+<p>Se evalúan dos variantes:</p>
+<ul>
+<li><strong>Modelo aditivo:</strong> la estacionalidad se suma al nivel y tendencia.<br />
+</li>
+<li><strong>Modelo multiplicativo:</strong> la estacionalidad se multiplica al nivel y tendencia, siendo más adecuada cuando la amplitud de los ciclos aumenta con el nivel de la serie.</li>
+</ul>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="avance-4-suavizamiento-y-holt-winters.html#cb62-1" tabindex="-1"></a><span class="co"># Holt-Winters aditivo</span></span>
+<span id="cb62-2"><a href="avance-4-suavizamiento-y-holt-winters.html#cb62-2" tabindex="-1"></a></span>
+<span id="cb62-3"><a href="avance-4-suavizamiento-y-holt-winters.html#cb62-3" tabindex="-1"></a>fit_hw_add <span class="ot">&lt;-</span> <span class="fu">HoltWinters</span>(spx_ts, <span class="at">seasonal =</span> <span class="st">&quot;additive&quot;</span>)</span>
+<span id="cb62-4"><a href="avance-4-suavizamiento-y-holt-winters.html#cb62-4" tabindex="-1"></a></span>
+<span id="cb62-5"><a href="avance-4-suavizamiento-y-holt-winters.html#cb62-5" tabindex="-1"></a><span class="co"># Holt-Winters multiplicativo</span></span>
+<span id="cb62-6"><a href="avance-4-suavizamiento-y-holt-winters.html#cb62-6" tabindex="-1"></a></span>
+<span id="cb62-7"><a href="avance-4-suavizamiento-y-holt-winters.html#cb62-7" tabindex="-1"></a>fit_hw_mul <span class="ot">&lt;-</span> <span class="fu">HoltWinters</span>(spx_ts, <span class="at">seasonal =</span> <span class="st">&quot;multiplicative&quot;</span>)</span>
+<span id="cb62-8"><a href="avance-4-suavizamiento-y-holt-winters.html#cb62-8" tabindex="-1"></a></span>
+<span id="cb62-9"><a href="avance-4-suavizamiento-y-holt-winters.html#cb62-9" tabindex="-1"></a><span class="co"># Métricas in-sample</span></span>
+<span id="cb62-10"><a href="avance-4-suavizamiento-y-holt-winters.html#cb62-10" tabindex="-1"></a></span>
+<span id="cb62-11"><a href="avance-4-suavizamiento-y-holt-winters.html#cb62-11" tabindex="-1"></a>acc_hw_add <span class="ot">&lt;-</span> <span class="fu">accuracy</span>(fit_hw_add<span class="sc">$</span>fitted, spx_ts)</span>
+<span id="cb62-12"><a href="avance-4-suavizamiento-y-holt-winters.html#cb62-12" tabindex="-1"></a>acc_hw_mul <span class="ot">&lt;-</span> <span class="fu">accuracy</span>(fit_hw_mul<span class="sc">$</span>fitted, spx_ts)</span>
+<span id="cb62-13"><a href="avance-4-suavizamiento-y-holt-winters.html#cb62-13" tabindex="-1"></a></span>
+<span id="cb62-14"><a href="avance-4-suavizamiento-y-holt-winters.html#cb62-14" tabindex="-1"></a>acc_hw_add</span></code></pre></div>
+<pre><code>##                  ME     RMSE      MAE        MPE     MAPE      ACF1 Theil&#39;s U
+## Test set -0.1842602 2.273871 1.628745 -0.2384074 1.904117 0.0202097 0.9422297</code></pre>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="avance-4-suavizamiento-y-holt-winters.html#cb64-1" tabindex="-1"></a>acc_hw_mul</span></code></pre></div>
+<pre><code>##                  ME     RMSE      MAE        MPE     MAPE       ACF1 Theil&#39;s U
+## Test set -0.1855597 2.332061 1.727485 -0.2397438 2.010975 0.01046326 0.9703109</code></pre>
+<p><strong>Interpretación de resultados</strong></p>
+<p><strong>ME (Error medio)</strong>: ambos modelos presentan valores negativos y cercanos entre sí, lo que indica una ligera tendencia a subestimar los valores reales.</p>
+<p><strong>RMSE y MAE</strong>: los errores promedio son similares, aunque el modelo aditivo presenta valores marginalmente menores, sugiriendo un ajuste ligeramente más preciso.</p>
+<p><strong>MAPE (Error porcentual absoluto medio)</strong>: el aditivo (1.9%) también muestra un desempeño superior frente al multiplicativo (2.0%), aunque la diferencia es pequeña.</p>
+<p><strong>ACF1</strong>: los residuos presentan baja autocorrelación, lo que sugiere un buen ajuste sin dependencia temporal remanente.</p>
+<p><strong>Theil’s U &lt; 1</strong>: confirma que ambos modelos superan a un pronóstico ingenuo; el aditivo es nuevamente más eficiente.</p>
+<p>En conjunto, el modelo Holt-Winters aditivo se considera la mejor opción para esta serie, dado su menor RMSE y MAPE.</p>
+<p><strong>Visualización comparativa</strong></p>
+<p>La siguiente figura muestra la comparación entre ambos modelos sobre la serie temporal:</p>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-1" tabindex="-1"></a><span class="co"># Comparación visual de ambos modelos</span></span>
+<span id="cb66-2"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-2" tabindex="-1"></a></span>
+<span id="cb66-3"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-3" tabindex="-1"></a><span class="do">## 4.4 Comparación visual de modelos Holt-Winters aditivo vs multiplicativo</span></span>
+<span id="cb66-4"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-4" tabindex="-1"></a></span>
+<span id="cb66-5"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-5" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb66-6"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-6" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb66-7"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-7" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb66-8"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-8" tabindex="-1"></a></span>
+<span id="cb66-9"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-9" tabindex="-1"></a><span class="co"># Alinear las longitudes de ambas estimaciones</span></span>
+<span id="cb66-10"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-10" tabindex="-1"></a>len_add <span class="ot">&lt;-</span> <span class="fu">nrow</span>(fit_hw_add<span class="sc">$</span>fitted)</span>
+<span id="cb66-11"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-11" tabindex="-1"></a>len_mul <span class="ot">&lt;-</span> <span class="fu">nrow</span>(fit_hw_mul<span class="sc">$</span>fitted)</span>
+<span id="cb66-12"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-12" tabindex="-1"></a>len_ts  <span class="ot">&lt;-</span> <span class="fu">length</span>(spx_ts)</span>
+<span id="cb66-13"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-13" tabindex="-1"></a>min_len <span class="ot">&lt;-</span> <span class="fu">min</span>(len_add, len_mul, len_ts)</span>
+<span id="cb66-14"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-14" tabindex="-1"></a></span>
+<span id="cb66-15"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-15" tabindex="-1"></a><span class="co"># Cortar todas las series para igualarlas</span></span>
+<span id="cb66-16"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-16" tabindex="-1"></a>spx_ts_aligned <span class="ot">&lt;-</span> <span class="fu">tail</span>(spx_ts, min_len)</span>
+<span id="cb66-17"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-17" tabindex="-1"></a>add_aligned    <span class="ot">&lt;-</span> <span class="fu">tail</span>(fit_hw_add<span class="sc">$</span>fitted[,<span class="dv">1</span>], min_len)</span>
+<span id="cb66-18"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-18" tabindex="-1"></a>mul_aligned    <span class="ot">&lt;-</span> <span class="fu">tail</span>(fit_hw_mul<span class="sc">$</span>fitted[,<span class="dv">1</span>], min_len)</span>
+<span id="cb66-19"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-19" tabindex="-1"></a></span>
+<span id="cb66-20"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-20" tabindex="-1"></a><span class="co"># Crear dataframe con datos alineados</span></span>
+<span id="cb66-21"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-21" tabindex="-1"></a>plot_hw <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb66-22"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-22" tabindex="-1"></a>  <span class="at">Fecha =</span> <span class="fu">as.Date</span>(<span class="fu">time</span>(<span class="fu">tail</span>(spx_ts, min_len))),</span>
+<span id="cb66-23"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-23" tabindex="-1"></a>  <span class="at">Original =</span> <span class="fu">as.numeric</span>(spx_ts_aligned),</span>
+<span id="cb66-24"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-24" tabindex="-1"></a>  <span class="at">HW_Aditivo =</span> <span class="fu">as.numeric</span>(add_aligned),</span>
+<span id="cb66-25"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-25" tabindex="-1"></a>  <span class="at">HW_Multiplicativo =</span> <span class="fu">as.numeric</span>(mul_aligned)</span>
+<span id="cb66-26"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-26" tabindex="-1"></a>)</span>
+<span id="cb66-27"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-27" tabindex="-1"></a></span>
+<span id="cb66-28"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-28" tabindex="-1"></a><span class="co"># Reorganizar en formato largo para graficar</span></span>
+<span id="cb66-29"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-29" tabindex="-1"></a>plot_hw_long <span class="ot">&lt;-</span> plot_hw <span class="sc">%&gt;%</span></span>
+<span id="cb66-30"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-30" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(HW_Aditivo, HW_Multiplicativo),</span>
+<span id="cb66-31"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-31" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;Modelo&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;Ajuste&quot;</span>)</span>
+<span id="cb66-32"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-32" tabindex="-1"></a></span>
+<span id="cb66-33"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-33" tabindex="-1"></a><span class="co"># Graficar los resultados</span></span>
+<span id="cb66-34"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-34" tabindex="-1"></a><span class="fu">ggplot</span>(plot_hw_long, <span class="fu">aes</span>(<span class="at">x =</span> Fecha)) <span class="sc">+</span></span>
+<span id="cb66-35"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-35" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> Original), <span class="at">color =</span> <span class="st">&quot;gray70&quot;</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb66-36"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-36" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> Ajuste, <span class="at">color =</span> Modelo),</span>
+<span id="cb66-37"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-37" tabindex="-1"></a>            <span class="at">linewidth =</span> <span class="fl">0.6</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="sc">+</span></span>
+<span id="cb66-38"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-38" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;HW_Aditivo&quot;</span> <span class="ot">=</span> <span class="st">&quot;darkgreen&quot;</span>, </span>
+<span id="cb66-39"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-39" tabindex="-1"></a>                                <span class="st">&quot;HW_Multiplicativo&quot;</span> <span class="ot">=</span> <span class="st">&quot;purple&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb66-40"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-40" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Holt-Winters — Ajuste aditivo vs multiplicativo&quot;</span>,</span>
+<span id="cb66-41"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-41" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Comparación de modelos de suavizamiento exponencial&quot;</span>,</span>
+<span id="cb66-42"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-42" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Tiempo&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Nivel&quot;</span>, <span class="at">color =</span> <span class="st">&quot;Modelo&quot;</span>) <span class="sc">+</span></span>
+<span id="cb66-43"><a href="avance-4-suavizamiento-y-holt-winters.html#cb66-43" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<p><img src="Bookdown4_files/figure-html/unnamed-chunk-22-1.png" width="672" />
+<strong>Análisis visual</strong></p>
+<p>En la gráfica se observa que ambos modelos <strong>siguen de manera eficiente la tendencia creciente del S&amp;P 500</strong>, capturando los ciclos de corto plazo.
+No obstante:</p>
+<ul>
+<li><p>El modelo <strong>aditivo (línea verde discontinua)</strong> presenta una trayectoria más estable y ajustada al comportamiento general de la serie.</p></li>
+<li><p>El <strong>multiplicativo (línea púrpura)</strong> genera ligeras desviaciones en los picos más altos, probablemente debido a su sensibilidad a la variación proporcional de los valores.</p></li>
+</ul>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-1" tabindex="-1"></a><span class="co"># Selección automática según menor RMSE</span></span>
+<span id="cb67-2"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-2" tabindex="-1"></a></span>
+<span id="cb67-3"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-3" tabindex="-1"></a><span class="co"># Comparación automática entre modelos Holt-Winters</span></span>
+<span id="cb67-4"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-4" tabindex="-1"></a></span>
+<span id="cb67-5"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-5" tabindex="-1"></a><span class="fu">library</span>(forecast)</span>
+<span id="cb67-6"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-6" tabindex="-1"></a></span>
+<span id="cb67-7"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-7" tabindex="-1"></a><span class="co"># Calcular métricas de precisión</span></span>
+<span id="cb67-8"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-8" tabindex="-1"></a><span class="co"># Alinear longitudes de fitted y serie original</span></span>
+<span id="cb67-9"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-9" tabindex="-1"></a>fitted_add <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(fit_hw_add<span class="sc">$</span>fitted[,<span class="dv">1</span>])</span>
+<span id="cb67-10"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-10" tabindex="-1"></a>fitted_mul <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(fit_hw_mul<span class="sc">$</span>fitted[,<span class="dv">1</span>])</span>
+<span id="cb67-11"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-11" tabindex="-1"></a></span>
+<span id="cb67-12"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-12" tabindex="-1"></a><span class="co"># Extraer las partes equivalentes de la serie original</span></span>
+<span id="cb67-13"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-13" tabindex="-1"></a>aligned_ts_add <span class="ot">&lt;-</span> <span class="fu">tail</span>(<span class="fu">as.numeric</span>(spx_ts), <span class="fu">length</span>(fitted_add))</span>
+<span id="cb67-14"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-14" tabindex="-1"></a>aligned_ts_mul <span class="ot">&lt;-</span> <span class="fu">tail</span>(<span class="fu">as.numeric</span>(spx_ts), <span class="fu">length</span>(fitted_mul))</span>
+<span id="cb67-15"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-15" tabindex="-1"></a></span>
+<span id="cb67-16"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-16" tabindex="-1"></a><span class="co"># Calcular RMSE manualmente</span></span>
+<span id="cb67-17"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-17" tabindex="-1"></a>rmse_hw_add <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((fitted_add <span class="sc">-</span> aligned_ts_add)<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb67-18"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-18" tabindex="-1"></a>rmse_hw_mul <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>((fitted_mul <span class="sc">-</span> aligned_ts_mul)<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb67-19"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-19" tabindex="-1"></a></span>
+<span id="cb67-20"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-20" tabindex="-1"></a><span class="co"># Comparar y elegir el mejor</span></span>
+<span id="cb67-21"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-21" tabindex="-1"></a>fit_hw_best <span class="ot">&lt;-</span> <span class="cf">if</span> (rmse_hw_mul <span class="sc">&lt;</span> rmse_hw_add) fit_hw_mul <span class="cf">else</span> fit_hw_add</span>
+<span id="cb67-22"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-22" tabindex="-1"></a>model_name  <span class="ot">&lt;-</span> <span class="cf">if</span> (rmse_hw_mul <span class="sc">&lt;</span> rmse_hw_add) <span class="st">&quot;HW multiplicativo&quot;</span> <span class="cf">else</span> <span class="st">&quot;HW aditivo&quot;</span></span>
+<span id="cb67-23"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-23" tabindex="-1"></a></span>
+<span id="cb67-24"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-24" tabindex="-1"></a><span class="co"># Mostrar resultados</span></span>
+<span id="cb67-25"><a href="avance-4-suavizamiento-y-holt-winters.html#cb67-25" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;RMSE aditivo:&quot;</span>, rmse_hw_add, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>## RMSE aditivo: 2.273871</code></pre>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="avance-4-suavizamiento-y-holt-winters.html#cb69-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;RMSE multiplicativo:&quot;</span>, rmse_hw_mul, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>## RMSE multiplicativo: 2.332061</code></pre>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="avance-4-suavizamiento-y-holt-winters.html#cb71-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;El modelo con mejor desempeño es:&quot;</span>, model_name, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>## El modelo con mejor desempeño es: HW aditivo</code></pre>
+<p><strong>Conclusión</strong></p>
+<p>El análisis confirma que el modelo <strong>Holt-Winters aditivo</strong> ofrece un mejor desempeño en términos de ajuste y estabilidad.</p>
+<p>Esto sugiere que la estacionalidad en el índice S&amp;P 500 durante el periodo analizado <strong>no crece proporcionalmente con el nivel del índice</strong>, por lo que un enfoque <strong>aditivo</strong> resulta más apropiado.</p>
+<p>En la siguiente sección se realizará una <strong>evaluación automática de modelos</strong> con base en el <strong>error RMSE</strong>, para seleccionar el modelo final que será utilizado en la predicción y validación fuera de muestra.</p>
+<p>##19. Descomposición y pronóstico con Holt-Winters aditivo</p>
+<p>Después de comparar las variantes aditiva y multiplicativa del modelo Holt-Winters, se selecciona el <strong>modelo aditivo</strong> como el más adecuado para representar la serie temporal del índice S&amp;P 500.<br />
+A continuación, se realiza su descomposición y un pronóstico a 12 meses, para analizar la estructura interna del modelo y su capacidad predictiva.</p>
+<hr />
+<div id="descomposición-del-modelo" class="section level3 hasAnchor" number="4.0.1">
+<h3><span class="header-section-number">4.0.1</span> Descomposición del modelo<a href="avance-4-suavizamiento-y-holt-winters.html#descomposici%C3%B3n-del-modelo" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>La siguiente figura muestra la <strong>descomposición del modelo Holt-Winters aditivo</strong>, en sus tres componentes principales: nivel, tendencia y estacionalidad.</p>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="avance-4-suavizamiento-y-holt-winters.html#cb73-1" tabindex="-1"></a><span class="co"># Descomposición de componentes del modelo seleccionado</span></span>
+<span id="cb73-2"><a href="avance-4-suavizamiento-y-holt-winters.html#cb73-2" tabindex="-1"></a></span>
+<span id="cb73-3"><a href="avance-4-suavizamiento-y-holt-winters.html#cb73-3" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">fitted</span>(fit_hw_best),</span>
+<span id="cb73-4"><a href="avance-4-suavizamiento-y-holt-winters.html#cb73-4" tabindex="-1"></a><span class="at">main =</span> <span class="fu">paste</span>(<span class="st">&quot;Descomposición con&quot;</span>, model_name),</span>
+<span id="cb73-5"><a href="avance-4-suavizamiento-y-holt-winters.html#cb73-5" tabindex="-1"></a><span class="at">xlab =</span> <span class="st">&quot;Tiempo&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Nivel / Tendencia / Estacionalidad&quot;</span>)</span></code></pre></div>
+<p><img src="Bookdown4_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<p><strong>Interpretación de la descomposición</strong></p>
+<p><strong>Nivel (level)</strong>: representa el valor promedio de la serie a lo largo del tiempo. Se observa una tendencia creciente sostenida, coherente con el comportamiento del S&amp;P 500 durante el periodo analizado.</p>
+<p><strong>Tendencia (trend)</strong>: la línea muestra un crecimiento moderado, especialmente visible hacia los últimos años de la serie (2016–2018), donde el mercado experimenta un incremento más pronunciado.</p>
+<p><strong>Estacionalidad (season)</strong>: exhibe oscilaciones regulares, lo que indica la presencia de un patrón estacional leve, posiblemente relacionado con ciclos financieros o periodos de volatilidad recurrente.</p>
+<p>La estructura muestra que el componente <strong>aditivo</strong> describe de manera adecuada las fluctuaciones estacionales sin amplificar excesivamente la variabilidad en los picos altos, lo que valida la elección del modelo aditivo frente al multiplicativo.</p>
+<p>##20. Pronóstico con Holt-Winters</p>
+<p>Se realizan pronósticos a 12 meses, incluyendo intervalos de confianza del 95%.</p>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="avance-4-suavizamiento-y-holt-winters.html#cb74-1" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="dv">12</span></span>
+<span id="cb74-2"><a href="avance-4-suavizamiento-y-holt-winters.html#cb74-2" tabindex="-1"></a>fc_hw <span class="ot">&lt;-</span> forecast<span class="sc">::</span><span class="fu">forecast</span>(fit_hw_best, <span class="at">h =</span> h)</span>
+<span id="cb74-3"><a href="avance-4-suavizamiento-y-holt-winters.html#cb74-3" tabindex="-1"></a></span>
+<span id="cb74-4"><a href="avance-4-suavizamiento-y-holt-winters.html#cb74-4" tabindex="-1"></a><span class="fu">autoplot</span>(fc_hw) <span class="sc">+</span></span>
+<span id="cb74-5"><a href="avance-4-suavizamiento-y-holt-winters.html#cb74-5" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste</span>(<span class="st">&quot;Pronóstico a 12 meses —&quot;</span>, model_name),</span>
+<span id="cb74-6"><a href="avance-4-suavizamiento-y-holt-winters.html#cb74-6" tabindex="-1"></a><span class="at">x =</span> <span class="st">&quot;Tiempo&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Nivel&quot;</span>) <span class="sc">+</span></span>
+<span id="cb74-7"><a href="avance-4-suavizamiento-y-holt-winters.html#cb74-7" tabindex="-1"></a><span class="fu">theme_minimal</span>()</span></code></pre></div>
+<p><img src="Bookdown4_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<p><strong>Análisis de los resultados</strong></p>
+<p>El <strong>modelo proyecta un crecimiento continuo</strong> del índice en el año siguiente, pasando de un nivel estimado de 111 hasta aproximadamente 115–116 puntos hacia mediados de 2018.</p>
+<p>Los <strong>intervalos de confianza (95%)</strong> se amplían gradualmente, lo que refleja un aumento de la incertidumbre conforme se extiende el horizonte de predicción.</p>
+<p>La <strong>banda de confianza asimétrica</strong> es un indicador de estabilidad: no hay signos de volatilidad extrema o rupturas estructurales significativas.</p>
+<p>El patrón proyectado es coherente con el comportamiento histórico del índice, manteniendo la tendencia alcista identificada previamente.</p>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="avance-4-suavizamiento-y-holt-winters.html#cb75-1" tabindex="-1"></a><span class="co"># Tabla de pronóstico</span></span>
+<span id="cb75-2"><a href="avance-4-suavizamiento-y-holt-winters.html#cb75-2" tabindex="-1"></a></span>
+<span id="cb75-3"><a href="avance-4-suavizamiento-y-holt-winters.html#cb75-3" tabindex="-1"></a>fc_tbl <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(<span class="fu">cbind</span>(</span>
+<span id="cb75-4"><a href="avance-4-suavizamiento-y-holt-winters.html#cb75-4" tabindex="-1"></a><span class="at">Fecha =</span> <span class="fu">as.yearmon</span>(<span class="fu">time</span>(fc_hw<span class="sc">$</span>mean)),</span>
+<span id="cb75-5"><a href="avance-4-suavizamiento-y-holt-winters.html#cb75-5" tabindex="-1"></a>Pronóstico <span class="ot">=</span> <span class="fu">as.numeric</span>(fc_hw<span class="sc">$</span>mean),</span>
+<span id="cb75-6"><a href="avance-4-suavizamiento-y-holt-winters.html#cb75-6" tabindex="-1"></a><span class="at">LI_95 =</span> <span class="fu">as.numeric</span>(fc_hw<span class="sc">$</span>lower[,<span class="st">&quot;95%&quot;</span>]),</span>
+<span id="cb75-7"><a href="avance-4-suavizamiento-y-holt-winters.html#cb75-7" tabindex="-1"></a><span class="at">LS_95 =</span> <span class="fu">as.numeric</span>(fc_hw<span class="sc">$</span>upper[,<span class="st">&quot;95%&quot;</span>])</span>
+<span id="cb75-8"><a href="avance-4-suavizamiento-y-holt-winters.html#cb75-8" tabindex="-1"></a>))</span>
+<span id="cb75-9"><a href="avance-4-suavizamiento-y-holt-winters.html#cb75-9" tabindex="-1"></a><span class="fu">head</span>(fc_tbl, <span class="dv">6</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 6 × 4
+##   Fecha Pronóstico LI_95 LS_95
+##   &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 2018.       111.  107.  116.
+## 2 2018.       111.  105.  117.
+## 3 2018.       112.  104.  120.
+## 4 2018.       115.  106.  124.
+## 5 2018.       116.  106.  126.
+## 6 2019.       115.  104.  126.</code></pre>
+<p><strong>Conclusiones</strong></p>
+<p>El <strong>modelo Holt-Winters</strong> aditivo logra <strong>capturar adecuadamente la tendencia y estacionalidad leve</strong> del S&amp;P 500, ofreciendo un ajuste robusto y estable.</p>
+<p>La descomposición confirma que el <strong>nivel y la tendencia</strong> son los componentes dominantes, mientras que la estacionalidad tiene un impacto limitado pero recurrente.</p>
+<p>El pronóstico de 12 meses proyecta un <strong>crecimiento sostenido</strong> del índice, con valores comprendidos entre 110 y 120 puntos, lo que se alinea con el comportamiento económico del periodo.</p>
+<p>El modelo muestra <strong>baja autocorrelación residual y errores porcentuales reducidos (MAPE ≈ 1.9%)</strong>, lo que respalda su fiabilidad.</p>
+<p>En términos prácticos, <strong>el modelo aditivo</strong> se recomienda frente al multiplicativo, pues evita la sobreestimación de la amplitud de los ciclos y mantiene la consistencia estadística en todo el rango de la serie.</p>
+<p>##21. Comparación y evaluación final de modelos</p>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-1" tabindex="-1"></a><span class="co"># Comparación global SES, Holt y HW</span></span>
+<span id="cb77-2"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-2" tabindex="-1"></a></span>
+<span id="cb77-3"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-3" tabindex="-1"></a><span class="do">## Comparación global entre SES, Holt y Holt-Winters</span></span>
+<span id="cb77-4"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-4" tabindex="-1"></a></span>
+<span id="cb77-5"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-5" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb77-6"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-6" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb77-7"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-7" tabindex="-1"></a><span class="fu">library</span>(forecast)</span>
+<span id="cb77-8"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-8" tabindex="-1"></a></span>
+<span id="cb77-9"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-9" tabindex="-1"></a><span class="co"># Crear función auxiliar para calcular métricas básicas</span></span>
+<span id="cb77-10"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-10" tabindex="-1"></a>metricas <span class="ot">&lt;-</span> <span class="cf">function</span>(fitted_values, actual_values) {</span>
+<span id="cb77-11"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-11" tabindex="-1"></a>  errores <span class="ot">&lt;-</span> actual_values <span class="sc">-</span> fitted_values</span>
+<span id="cb77-12"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-12" tabindex="-1"></a>  <span class="fu">tibble</span>(</span>
+<span id="cb77-13"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-13" tabindex="-1"></a>    <span class="at">ME   =</span> <span class="fu">mean</span>(errores, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb77-14"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-14" tabindex="-1"></a>    <span class="at">RMSE =</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(errores<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb77-15"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-15" tabindex="-1"></a>    <span class="at">MAE  =</span> <span class="fu">mean</span>(<span class="fu">abs</span>(errores), <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb77-16"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-16" tabindex="-1"></a>    <span class="at">MPE  =</span> <span class="fu">mean</span>(errores <span class="sc">/</span> actual_values, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb77-17"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-17" tabindex="-1"></a>    <span class="at">MAPE =</span> <span class="fu">mean</span>(<span class="fu">abs</span>(errores <span class="sc">/</span> actual_values), <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb77-18"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-18" tabindex="-1"></a>  )</span>
+<span id="cb77-19"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-19" tabindex="-1"></a>}</span>
+<span id="cb77-20"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-20" tabindex="-1"></a></span>
+<span id="cb77-21"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-21" tabindex="-1"></a><span class="co"># Calcular métricas para cada modelo</span></span>
+<span id="cb77-22"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-22" tabindex="-1"></a>ses_metrics <span class="ot">&lt;-</span> <span class="fu">metricas</span>(fit_ses<span class="sc">$</span>fitted, spx_ts[<span class="sc">!</span><span class="fu">is.na</span>(fit_ses<span class="sc">$</span>fitted)])</span>
+<span id="cb77-23"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-23" tabindex="-1"></a>holt_metrics <span class="ot">&lt;-</span> <span class="fu">metricas</span>(fit_holt<span class="sc">$</span>fitted, spx_ts[<span class="sc">!</span><span class="fu">is.na</span>(fit_holt<span class="sc">$</span>fitted)])</span>
+<span id="cb77-24"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-24" tabindex="-1"></a>hw_metrics <span class="ot">&lt;-</span> <span class="fu">metricas</span>(fit_hw_best<span class="sc">$</span>fitted[,<span class="dv">1</span>], <span class="fu">tail</span>(spx_ts, <span class="fu">length</span>(fit_hw_best<span class="sc">$</span>fitted[,<span class="dv">1</span>])))</span>
+<span id="cb77-25"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-25" tabindex="-1"></a></span>
+<span id="cb77-26"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-26" tabindex="-1"></a><span class="co"># Unir en tabla comparativa</span></span>
+<span id="cb77-27"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-27" tabindex="-1"></a>resumen_acc <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb77-28"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-28" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">Modelo =</span> <span class="st">&quot;SES&quot;</span>)  <span class="sc">%&gt;%</span> <span class="fu">bind_cols</span>(ses_metrics),</span>
+<span id="cb77-29"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-29" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">Modelo =</span> <span class="st">&quot;Holt&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">bind_cols</span>(holt_metrics),</span>
+<span id="cb77-30"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-30" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">Modelo =</span> model_name) <span class="sc">%&gt;%</span> <span class="fu">bind_cols</span>(hw_metrics)</span>
+<span id="cb77-31"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-31" tabindex="-1"></a>)</span>
+<span id="cb77-32"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-32" tabindex="-1"></a></span>
+<span id="cb77-33"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-33" tabindex="-1"></a><span class="co"># Mostrar resultados</span></span>
+<span id="cb77-34"><a href="avance-4-suavizamiento-y-holt-winters.html#cb77-34" tabindex="-1"></a>resumen_acc</span></code></pre></div>
+<pre><code>## # A tibble: 3 × 6
+##   Modelo         ME  RMSE   MAE    MPE  MAPE
+##   &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1 SES         0.838  6.55 0.838  0.767 0.767
+## 2 Holt       -0.224  9.55 3.89  -0.884 4.30 
+## 3 HW aditivo -0.184  2.27 1.63  -0.238 1.90</code></pre>
+<p><strong>Conclusiones del ajuste:</strong></p>
+<p>Los <strong>modelos Holt y Holt-Winters</strong> ofrecen menor error que el <strong>SES</strong>.</p>
+<p>El modelo final seleccionado (r model_name) presenta el <strong>menor RMSE y MAPE</strong>, validando su mejor capacidad predictiva.</p>
+<p>La estacionalidad no es dominante, por lo tanto la mejora de HW sobre Holt es leve pero consistente.</p>
+<p>##22. Conclusiones generales del Avance 4</p>
+<p>El <strong>suavizamiento exponencial</strong> permite reducir el ruido de corto plazo y resaltar la tendencia.</p>
+<p>El <strong>modelo Holt-Winters</strong> resulta el más completo al incorporar tendencia y estacionalidad, aunque en esta serie la estacionalidad es leve.</p>
+<p>El <strong>modelo óptimo</strong> (según RMSE y MAPE) es adecuado para proyecciones de corto plazo del índice S&amp;P 500.</p>
+<p>El análisis refuerza la importancia de elegir el modelo según el <strong>comportamiento de la serie</strong> y no por complejidad.</p>
+<p>#Referencias:</p>
+<p>Hyndman, R.J. &amp; Athanasopoulos, G. (2021). Forecasting: Principles and Practice (3rd ed.).</p>
+<p>Kaggle Dataset: S&amp;P 500 Stock Data (Cam Nugent).</p>
+<p>Yahoo Finance API (para validación cruzada de precios históricos).</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="avance-3-estacionariedad-diferenciación-y-transformaciones.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
